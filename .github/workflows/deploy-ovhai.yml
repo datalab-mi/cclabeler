@@ -37,6 +37,7 @@ jobs:
           -d '{ "value": "${{ steps.deploy.outputs.OVH_JOB_ID }}" }' \
           'https://persistent.aaim.io/api/values/set?key=OVH_JOB_ID&output=plain'
       - name: get ip
+        id: jobIp
         run: |
           jobIp() { ovhai job get {{ steps.deploy.outputs.OVH_JOB_ID }} -o json | jq '.status.externalIp'; }
           until [ jobIp != "null" ]; do
@@ -45,4 +46,4 @@ jobs:
           echo "::set-output name=OVH_JOB_IP::jobIp"
       - name: redirection with Dynhost from ovh
         run: |
-          curl "https://iafoule.fr-cclabeler:${{secrets.DYNAHOST_PSWD}}@www.ovh.com/nic/update/?system=dyndns&hostname=${HOSTNAME}&myip=${{ steps.deploy.outputs.OVH_JOB_IP }}"
+          curl "https://iafoule.fr-cclabeler:${{secrets.DYNAHOST_PSWD}}@www.ovh.com/nic/update/?system=dyndns&hostname=${HOSTNAME}&myip=${{ steps.jobIp.outputs.OVH_JOB_IP }}"
