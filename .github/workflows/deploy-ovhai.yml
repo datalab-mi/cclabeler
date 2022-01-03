@@ -43,6 +43,7 @@ jobs:
           echo $(jobIp)
           until [ "$(jobIp)" != "null" ]; do
             echo "Waiting job IP"
+            sleep 5
           done
           echo "::set-output name=OVH_JOB_IP::$(jobIp)"
       - name: redirection with Dynhost from ovh
