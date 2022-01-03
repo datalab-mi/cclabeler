@@ -39,7 +39,7 @@ jobs:
       - name: get ip
         id: jobIp
         run: |
-          jobIp() { ovhai job get {{ steps.deploy.outputs.OVH_JOB_ID }} -o json | jq '.status.externalIp'; }
+          jobIp() { ovhai job get ${{ steps.deploy.outputs.OVH_JOB_ID }} -o json | jq '.status.externalIp'; }
           echo $(jobIp)
           until [ jobIp != "null" ]; do
             sleep 1
