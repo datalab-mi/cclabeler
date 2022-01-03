@@ -47,4 +47,4 @@ jobs:
           echo "::set-output name=OVH_JOB_IP::$(jobIp)"
       - name: redirection with Dynhost from ovh
         run: |
-          curl "https://iafoule.fr-cclabeler:${{secrets.DYNAHOST_PSWD}}@www.ovh.com/nic/update/?system=dyndns&hostname=${HOSTNAME}&myip=${{ steps.jobIp.outputs.OVH_JOB_IP }}"
+          curl "https://iafoule.fr-cclabeler:${{ secrets.DYNAHOST_PSWD }}@www.ovh.com/nic/update/?system=dyndns&hostname=${{ env.HOSTNAME }}&myip=${{ steps.jobIp.outputs.OVH_JOB_IP }}"
