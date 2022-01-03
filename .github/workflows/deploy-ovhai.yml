@@ -42,7 +42,7 @@ jobs:
           jobIp() { ovhai job get ${{ steps.deploy.outputs.OVH_JOB_ID }} -o json | jq '.status.externalIp'; }
           echo $(jobIp)
           until [ jobIp != "null" ]; do
-            sleep 1
+            echo "Waiting job IP"
           done
           echo "::set-output name=OVH_JOB_IP::$(jobIp)"
       - name: redirection with Dynhost from ovh
