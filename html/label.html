@@ -119,6 +119,11 @@
             </div>
         </div>
     </div>
+    {% if origin_user == "admin" %}
+    <div>
+        <button type="button" id="push_into_golden" class="btn btn-info">Push into Golden Dataset</button>
+    </div>
+    {% endif %}
     <div id="save" class="hide alert alert-success">SAVE SUCCESS</div>
     <div id="finished" class="hide alert alert-success">FINISHED</div>
     <div id="unfinished" class="hide alert alert-warning">UNFINISHED</div>
@@ -131,6 +136,8 @@
 </div>
 <script>
         var user = "{{ user }}";
+        var origin_user = "{{ origin_user }}";
+
         var imgpath = "static/{{ imgid }}";
         var initMarkStatus = {{ marks }};
         var drawStackDict = JSON.parse("{{ drawStack }}".replace(/&quot;/g, '"'));
@@ -169,6 +176,8 @@
 
         }
         drawSchedule({{ donelen }}, {{ halflen }}, {{ datalen }}, image_metadata, image_properties);
+
+
 </script>
 <script src="static/global.js"></script>
 <script src="static/label.js"></script>

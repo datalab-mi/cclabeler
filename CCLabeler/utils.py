@@ -19,6 +19,7 @@ markdir = os.path.join(settings.BASE_DIR, "data", "marks")
 # Dictionary to reflect user connexion
 users_state = {}
 
+
 class Player():
     def __init__(self, name='admin'):
         self.name = name
@@ -33,7 +34,6 @@ class Player():
                 self.done = list(userInfo['done'])
                 self.half = list(userInfo['half'])
 
-
     @property
     def pong(self):
         if self.name not in users_state:
@@ -46,16 +46,16 @@ class Player():
     def disconnect(self):
         if self.name in users_state:
             users_state.pop(self.name)
-            # print("User %s is disconnected"%self.name)
+            print("User %s is disconnected" % self.name)
         else:
-            # print('user %s is already disconnected'% self.name)
+            print('user %s is already disconnected' % self.name)
             pass
 
     def connect(self):
         # Update State Connexion Dictionary
 
-        users_state.update({self.name : datetime.now()})
-        # print("User %s is connected"%self.name)
+        users_state.update({self.name: datetime.now()})
+        print("User %s is connected" % self.name)
 
     def testPsd(self, psd=''):
         if self.password == None:
@@ -390,3 +390,46 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
     except Exception as e:
         print("Exception : ", str(e))
         return False
+
+
+def push_into_golden(name, imgid):
+    # print("name:", name)
+    # print("imgid:", imgid)
+    try:
+        jsonfile = os.path.join(userdir, name + '.json')
+        with open(jsonfile) as f:
+            userdata = json.load(f)
+            data = list(userdata['data'])
+            done = list(userdata['done'])
+            half = list(userdata['half'])
+            if imgid in data:
+                data.remove(imgid)
+            if imgid in done:
+                done.remove(imgid)
+            if imgid in half:
+                half.remove(imgid)
+            userdata['data'] = data
+            userdata['done'] = done
+            userdata['half'] = half
+        with open(jsonfile, 'w+') as f:
+            # print("userdata:", userdata)
+            json.dump(dict(userdata), f)
+        jsonfile = os.path.join(userdir, 'golden.json')
+        with open(jsonfile) as f:
+            userdata = json.load(f)
+            data = list(userdata['data'])
+            done = list(userdata['done'])
+            if imgid not in data:
+                data += [imgid]
+            if imgid not in done:
+                done += [imgid]
+            userdata['data'] = data
+            userdata['done'] = done
+        with open(jsonfile, 'w+') as f:
+            # print("userdata:", userdata)
+            json.dump(dict(userdata), f)
+    except Exception as e:
+        print("Image transfer to golden dataset impossible : " + str(e))
+        return False
+
+    return True

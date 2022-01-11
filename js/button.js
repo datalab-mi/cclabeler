@@ -266,6 +266,22 @@ $('#oprectify').click(function () {
     curLabelForm = null;
 });
 
+$('#push_into_golden').click(function () {
+    var imgid = imgpath.split('/')[1]
+    var sendinfo = {
+    user: user,
+    imgid: imgid,
+    };
+    $.post('/push_into_golden/', sendinfo, function (result) {
+        console.log('/push_into_golden');
+        console.log(result);
+        if (result.success) {
+            console.log('Ok');
+        }
+    });
+
+});
+
 /************ mouse event  *************/
 
 $(document).ready(function () {
