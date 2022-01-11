@@ -28,6 +28,6 @@ urlpatterns = [
     path('upload/', view.upload, name="upload"),
     path('generate_golden_dataframe/', view.generate_golden_dataframe, name="generate_golden_dataframe"),
     path('disconnect/', view.disconnect),
-    path('ping/', view.ping),
+    path('ping', view.ping),
     path('push_into_golden/', view.push_into_golden),
 ]
