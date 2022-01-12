@@ -435,23 +435,27 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
 
             plot_columns = ['nb_person', 'nb_channels', 'size', 'width', 'height', 'ratio']
             for column in plot_columns:
+                fig = plt.figure()
                 plt.hist(golden_dataframe[column], bins=50)
                 plt.ylabel('nb_images')
                 plt.xlabel(column)
-                plt.title("Histogram nb_images vs " + column);
-                #plt.show()
-                plt.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"))
+                plt.title("Histogram nb_images vs " + column)
+                fig.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"), dpi=fig.dpi,
+                            bbox_inches='tight')
+                plt.show()
 
             plot_columns = ['extension']
             for column in plot_columns:
                 categories = golden_dataframe[column].value_counts().index
                 counts = golden_dataframe[column].value_counts().values
+                fig = plt.figure()
                 plt.bar(categories, counts, width=0.5)
                 plt.ylabel('nb_images')
                 plt.xlabel(column)
-                plt.title("Histogram nb_images vs " + 'extension');
-                #plt.show()
-                plt.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"))
+                plt.title("Histogram nb_images vs " + column)
+                fig.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"), dpi=fig.dpi,
+                            bbox_inches='tight')
+                plt.show()
 
             all_metadatas = []
             for metadatas in golden_dataframe['metadata']:
@@ -461,12 +465,13 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
             df = pd.DataFrame(all_metadatas, columns=[column])
             categories = df[column].value_counts().index
             counts = df[column].value_counts().values
+            fig = plt.figure()
             plt.bar(categories, counts, width=0.5)
             plt.ylabel('nb_images')
             plt.xlabel(column)
-            plt.title("Histogram nb_images vs " + column);
-            #plt.show()
-            plt.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"))
+            plt.title("Histogram nb_images vs " + column)
+            fig.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"), dpi=fig.dpi, bbox_inches='tight')
+            plt.show()
 
             print(df['metadata'].value_counts())
 
