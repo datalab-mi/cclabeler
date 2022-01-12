@@ -23,12 +23,12 @@ users_state = {}
 
 
 class Player():
-    def __init__(self, name='admin'):
+    def __init__(self, name='admin', load=True):
         self.name = name
         self.password = None
         self.data, self.done, self.half = [], [], []
         jsonfile = os.path.join(userdir, name + '.json')
-        if os.path.exists(jsonfile):
+        if load and os.path.exists(jsonfile):
             with open(jsonfile) as f:
                 userInfo = json.load(f)
                 self.password = userInfo['password']
@@ -40,7 +40,7 @@ class Player():
     def pong(self):
         if self.name not in users_state:
             return False
-        if datetime.now() - users_state[self.name] > timedelta(seconds=10):
+        if datetime.now() - users_state[self.name] > timedelta(seconds=9):
             return False
         else:
             return True

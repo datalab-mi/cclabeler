@@ -10,6 +10,7 @@ from functools import reduce
 from . import utils
 from .forms import UploadFileForm, UnlockUserForm
 
+from django.conf import settings
 Player = utils.Player
 
 
@@ -30,7 +31,7 @@ def disconnect(request):
 def ping(request):
     name = request.POST.get('user')
     print('user %s wants to ping'%name)
-    player = Player(name)
+    player = Player(name, load=False)
     if player.pong:
         player.connect()
         print('User : %s pong' % name)
@@ -233,7 +234,8 @@ def table(request):
         username=name,
         cdata=cdata,
         form=form,
-        form_unlock_user=form_unlock_user
+        form_unlock_user=form_unlock_user,
+        href_manual=settings.HREF_MANUAL
     )
     return render(request, 'table.html', context)
 
