@@ -104,13 +104,13 @@
 <script>
         $('td').click(function () {
             var user = $(this).parents('table').find('caption').attr('id')
-            var form = '<form action="/label" method="POST">' +
+            var form = '<form id="td-form" action="/label" method="POST">' +
                 '<input type="hidden" name="origin_user" value="{{ username }}">' +
                 '<input type="hidden" name="user" value="'+user+'">' +
                 '<input type="hidden" name="imgid" value="' + this.innerHTML + '">' +
                 '</form>';
             $(document.body).append(form);
-            $('form').submit();
+            document.getElementById("td-form").submit();
         });
         window.onload = function () {
               setInterval(function() {
