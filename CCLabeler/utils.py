@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
+import hashlib
 import json
-import os
 import math
+import os
+from datetime import datetime, timedelta
+
+import matplotlib.pyplot as plt
+import pandas as pd
+from PIL import Image
+
 from . import settings
 from . import utils
-from PIL import Image
-import hashlib
-import pandas as pd
-import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
 
 datadir = os.path.join(settings.BASE_DIR, "data")
 userdir = os.path.join(settings.BASE_DIR, "data", "users")
@@ -377,12 +379,12 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
                     for pt in js['points']:
                         x = round(pt['x'])
                         y = round(pt['y'])
-                        if x >= 0 and x <= properties['width'] and y >= 0 and y <= properties['height']:
-                            gt.append((x, y))
-                        else:
+                        if x < 0 or x > properties['width'] or y < 0 or y > properties['height']:
                             print("Point incohérent:")
                             print('x:', x, 'y:', y)
                             print('width:', properties['width'], 'height:', properties['height'])
+                        else:
+                            gt.append((x, y))
                     golden_record['ground_truth'] = gt
                     golden_records.append(golden_record)
 
@@ -437,7 +439,7 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
                 plt.ylabel('nb_images')
                 plt.xlabel(column)
                 plt.title("Histogram nb_images vs " + column);
-                # plt.show()
+                #plt.show()
                 plt.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"))
 
             plot_columns = ['extension']
@@ -448,22 +450,23 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
                 plt.ylabel('nb_images')
                 plt.xlabel(column)
                 plt.title("Histogram nb_images vs " + 'extension');
-                # plt.show()
+                #plt.show()
                 plt.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"))
 
             all_metadatas = []
             for metadatas in golden_dataframe['metadata']:
                 all_metadatas += metadatas
 
-            df = pd.DataFrame(all_metadatas, columns=['metadata'])
-            categories = df['metadata'].value_counts().index
-            counts = df['metadata'].value_counts().values
+            column = 'metadata'
+            df = pd.DataFrame(all_metadatas, columns=[column])
+            categories = df[column].value_counts().index
+            counts = df[column].value_counts().values
             plt.bar(categories, counts, width=0.5)
             plt.ylabel('nb_images')
             plt.xlabel(column)
-            plt.title("Histogram nb_images vs " + 'metadata');
-            # plt.show()
-            plt.savefig(os.path.join(datadir, "golden_dataframe_metadata.jpg"))
+            plt.title("Histogram nb_images vs " + column);
+            #plt.show()
+            plt.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"))
 
             print(df['metadata'].value_counts())
 
