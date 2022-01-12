@@ -426,8 +426,14 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
             ground_truth      object
             """
             # Description statistique du contenu du dataframe
+            desc_dir = os.path.join(datadir, "description")
+
+            if not os.path.isdir(desc_dir):
+                print(f'Creating {desc_dir}')
+                os.makedirs(desc_dir)
+
             golden_dataframe_description = golden_dataframe.describe(include='all').fillna('')
-            xlsx_file = os.path.join(datadir, "golden_dataframe_description.xlsx")
+            xlsx_file = os.path.join(desc_dir, "golden_dataframe_description.xlsx")
             writer = pd.ExcelWriter(xlsx_file)
             golden_dataframe_description.to_excel(writer, 'description')
             writer.save()
@@ -440,7 +446,7 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
                 plt.ylabel('nb_images')
                 plt.xlabel(column)
                 plt.title("Histogram nb_images vs " + column)
-                fig.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"), dpi=fig.dpi,
+                fig.savefig(os.path.join(desc_dir, "golden_dataframe_" + column + ".jpg"), dpi=fig.dpi,
                             bbox_inches='tight')
                 plt.show()
 
@@ -453,7 +459,7 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
                 plt.ylabel('nb_images')
                 plt.xlabel(column)
                 plt.title("Histogram nb_images vs " + column)
-                fig.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"), dpi=fig.dpi,
+                fig.savefig(os.path.join(desc_dir, "golden_dataframe_" + column + ".jpg"), dpi=fig.dpi,
                             bbox_inches='tight')
                 plt.show()
 
@@ -470,7 +476,7 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
             plt.ylabel('nb_images')
             plt.xlabel(column)
             plt.title("Histogram nb_images vs " + column)
-            fig.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"), dpi=fig.dpi, bbox_inches='tight')
+            fig.savefig(os.path.join(desc_dir, "golden_dataframe_" + column + ".jpg"), dpi=fig.dpi, bbox_inches='tight')
             plt.show()
 
             print(df['metadata'].value_counts())
