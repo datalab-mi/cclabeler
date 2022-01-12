@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-from pathlib import Path
 import math
 from . import settings
 from . import utils
 from PIL import Image
 import hashlib
 import pandas as pd
+import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
 datadir = os.path.join(settings.BASE_DIR, "data")
@@ -354,38 +354,121 @@ def generate_golden_dataframe(userdir, imgdir, resdir, datadir):
     print('Génération du Golden Dataframe...')
     try:
         golden_records = []
-        with open(os.path.join(userdir, 'golden.json')) as f:
+        user_json = os.path.join(userdir, 'golden.json')
+        with open(user_json) as f:
             userdata = json.load(f)
-            image_names = userdata['done']
-        for image_name in image_names:
-            image_path = os.path.join(imgdir, image_name)
-            result_path = os.path.join(resdir, image_name + '.json')
-            if not os.path.exists(result_path):
-                continue
-            golden_record = {'path': image_path}
-            with open(result_path) as f:
-                js = json.load(f)
-                properties = js['properties']
-                golden_record.update(properties)
-                golden_record['nb_person'] = js['human_num']
-                golden_record['result_path'] = result_path
+            image_names = userdata['data']
+            for image_name in image_names:
+                image_path = os.path.join(imgdir, image_name)
+                result_path = os.path.join(resdir, image_name + '.json')
+                if not os.path.exists(result_path):
+                    continue
+                golden_record = {'path': image_path}
+                with open(result_path) as f:
+                    js = json.load(f)
+                    properties = js['properties']
+                    golden_record.update(properties)
+                    metadata = js['metadata']
+                    golden_record['nb_person'] = js['human_num']
+                    golden_record['result_path'] = result_path
+                    golden_record['metadata'] = metadata
 
-                gt = []
-                for pt in js['points']:
-                    x = round(pt['x'])
-                    y = round(pt['y'])
-                    if x >= 0 and x <= properties['width'] and y >= 0 and y <= properties['height']:
-                        gt.append((x, y))
-                    else:
-                        print("Point incohérent:")
-                        print('x:', x, 'y:', y)
-                        print('width:', properties['width'], 'height:', properties['height'])
-                golden_record['ground_truth'] = gt
-                golden_records.append(golden_record)
-        # print("golden_records:", golden_records)
-        golden_dataframe = pd.DataFrame(golden_records)
-        golden_dataframe.to_pickle(os.path.join(datadir, "golden_dataframe.pkl"))
-        golden_dataframe.to_csv(os.path.join(datadir, "golden_dataframe.csv"))
+                    gt = []
+                    for pt in js['points']:
+                        x = round(pt['x'])
+                        y = round(pt['y'])
+                        if x >= 0 and x <= properties['width'] and y >= 0 and y <= properties['height']:
+                            gt.append((x, y))
+                        else:
+                            print("Point incohérent:")
+                            print('x:', x, 'y:', y)
+                            print('width:', properties['width'], 'height:', properties['height'])
+                    golden_record['ground_truth'] = gt
+                    golden_records.append(golden_record)
+
+        if len(golden_records):
+            golden_dataframe = pd.DataFrame(golden_records)
+            print("columns:", golden_dataframe.columns)
+            golden_dataframe['path'] = golden_dataframe['path'].astype('string')
+            golden_dataframe['name'] = golden_dataframe['name'].astype('string')
+            golden_dataframe['extension'] = golden_dataframe['extension'].astype('category')
+            golden_dataframe['width'] = golden_dataframe['width'].astype('int64')
+            golden_dataframe['height'] = golden_dataframe['height'].astype('int64')
+            golden_dataframe['ratio'] = golden_dataframe['ratio'].astype('float64')
+            golden_dataframe['nb_channels'] = golden_dataframe['nb_channels'].astype('int64')
+            golden_dataframe['size'] = golden_dataframe['size'].astype('int64')
+            golden_dataframe['md5'] = golden_dataframe['md5'].astype('string')
+            golden_dataframe['nb_person'] = golden_dataframe['nb_person'].astype('int64')
+            golden_dataframe['result_path'] = golden_dataframe['result_path'].astype('string')
+
+            pkl_file = os.path.join(datadir, "golden_dataframe.pkl")
+            golden_dataframe.to_pickle(pkl_file)
+            print("Dataframe (pkl) (", golden_dataframe.shape, ") : ", pkl_file)
+            print("Dataframe dtypes :")
+            print(golden_dataframe.dtypes)
+            """
+            Voici les dtypes attendus
+            golden_dataframe.dtypes:
+            path              string
+            name              string
+            extension       category
+            width              int64
+            height             int64
+            ratio            float64
+            nb_channels        int64
+            size               int64
+            md5               string
+            nb_person          int64
+            result_path       string
+            metadata          object
+            ground_truth      object
+            """
+            # Description statistique du contenu du dataframe
+            golden_dataframe_description = golden_dataframe.describe(include='all').fillna('')
+            xlsx_file = os.path.join(datadir, "golden_dataframe_description.xlsx")
+            writer = pd.ExcelWriter(xlsx_file)
+            golden_dataframe_description.to_excel(writer, 'description')
+            writer.save()
+            print("Dataframe Description (xlsx) : ", xlsx_file)
+
+            plot_columns = ['nb_person', 'nb_channels', 'size', 'width', 'height', 'ratio']
+            for column in plot_columns:
+                plt.hist(golden_dataframe[column], bins=50)
+                plt.ylabel('nb_images')
+                plt.xlabel(column)
+                plt.title("Histogram nb_images vs " + column);
+                # plt.show()
+                plt.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"))
+
+            plot_columns = ['extension']
+            for column in plot_columns:
+                categories = golden_dataframe[column].value_counts().index
+                counts = golden_dataframe[column].value_counts().values
+                plt.bar(categories, counts, width=0.5)
+                plt.ylabel('nb_images')
+                plt.xlabel(column)
+                plt.title("Histogram nb_images vs " + 'extension');
+                # plt.show()
+                plt.savefig(os.path.join(datadir, "golden_dataframe_" + column + ".jpg"))
+
+            all_metadatas = []
+            for metadatas in golden_dataframe['metadata']:
+                all_metadatas += metadatas
+
+            df = pd.DataFrame(all_metadatas, columns=['metadata'])
+            categories = df['metadata'].value_counts().index
+            counts = df['metadata'].value_counts().values
+            plt.bar(categories, counts, width=0.5)
+            plt.ylabel('nb_images')
+            plt.xlabel(column)
+            plt.title("Histogram nb_images vs " + 'metadata');
+            # plt.show()
+            plt.savefig(os.path.join(datadir, "golden_dataframe_metadata.jpg"))
+
+            print(df['metadata'].value_counts())
+
+        else:
+            print('No data found')
         return True
     except Exception as e:
         print("Exception : ", str(e))
