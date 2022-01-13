@@ -5,7 +5,7 @@ on:
 
 env:
   OVH_REGION: GRA
-  TAG: master
+  TAG: latest
 
 jobs:
   start:
