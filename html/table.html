@@ -99,6 +99,14 @@
         </form>
         {% endif %}
     </div>
+
+    {% if username != "admin" %}
+    <div class="col-sm-3">
+      <a href="{{ href_manual }}" target="_blank" download>
+        <button  class="btn btn-info">Download the user manual</button>
+      </a>
+    </div>
+    {% endif %}
 </div>
 
 <script>

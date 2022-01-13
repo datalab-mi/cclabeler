@@ -128,3 +128,5 @@ STATICFILES_DIRS = (
      os.path.join(BASE_DIR, "images"),
      os.path.join(BASE_DIR, "data", "images"),
 )
+
+HREF_MANUAL = "https://github.com/datalab-mi/cclabeler/raw/master/Manual.pdf"
