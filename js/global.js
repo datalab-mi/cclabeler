@@ -371,7 +371,7 @@ DrawStack.prototype.runStack = function () {
         var npainter = painter.unnormalize(...imgStatus.sizePara());
         npainter.draw();
     }
-    $('.left h3').text("Number: " + this.length());
+    $('.left h3').text("Number of persons : " + this.length());
 }
 DrawStack.prototype.nearby = function (x, y) {
     var idx = -1, dis = labelLineWidth;

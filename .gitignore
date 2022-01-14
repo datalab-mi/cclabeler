@@ -3,3 +3,4 @@ __pycache__
 data/jsons
 data/marks
 data/golden_*
+data/description/*
