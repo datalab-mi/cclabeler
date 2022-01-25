@@ -225,9 +225,11 @@ def table(request):
 
     cdata = []
     if player.name == "admin":
-        for a_name in ['user1', 'user2']:
-            player = Player(a_name)
-            cdata.append((a_name, makeTable(player)))
+        for userjs in sorted(os.listdir(utils.userdir)):
+            user_name = userjs.replace('.json', '').lower()
+            player = Player(user_name)
+            if player.data:
+                cdata.append((user_name, makeTable(player)))
     else:
         cdata = [(name, makeTable(player))]
     context = dict(
