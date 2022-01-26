@@ -6,16 +6,18 @@ body {
 }
 
 .left {
-    margin-left: 40px;
+    margin-left: 3vh;
     float: left;
-    height: 860px;
-    width: 320px;
+    height: 90vh;
+    width: 17vw;
     padding-top: 1px;
 }
 .right {
-    margin-left: 40px;
+    margin-left: 2vw;
     float: left;
-    width: 1280px;
+    width: 72vw;
+    height: 90vh;
+    padding-top: 1px;
 }
 #grid {
     margin-top: 10px;
