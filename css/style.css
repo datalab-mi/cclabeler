@@ -2,7 +2,7 @@ body {
     text-align: center;
 }
 .header {
-    margin-bottom: 30px;
+    margin-bottom: 1vh;
 }
 
 .left {
@@ -10,14 +10,12 @@ body {
     float: left;
     height: 90vh;
     width: 17vw;
-    padding-top: 1px;
 }
 .right {
-    margin-left: 2vw;
-    float: left;
+    margin-right: 2vw;
+    float: right;
     width: 72vw;
     height: 90vh;
-    padding-top: 1px;
 }
 #grid {
     margin-top: 10px;
@@ -56,15 +54,4 @@ body {
 
 .left .row {
   padding-top: 20px;
-}
-
-@media (-webkit-device-pixel-ratio: 1.5) {
-  * {
-    zoom: 0.6666;
-  }
-}
-@media (-webkit-device-pixel-ratio: 1.25) {
-  * {
-    zoom: 0.8;
-  }
 }
