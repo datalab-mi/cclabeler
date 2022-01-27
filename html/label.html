@@ -134,6 +134,8 @@
     </canvas>
 </div>
 <script>
+        document.querySelector("meta[name=viewport]").setAttribute('content', 'width=device-width, initial-scale='+(1/window.devicePixelRatio));
+
         var user = "{{ user }}";
         var origin_user = "{{ origin_user }}";
 

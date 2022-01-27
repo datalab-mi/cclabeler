@@ -57,3 +57,14 @@ body {
 .left .row {
   padding-top: 20px;
 }
+
+@media (-webkit-device-pixel-ratio: 1.5) {
+  * {
+    zoom: 0.6666;
+  }
+}
+@media (-webkit-device-pixel-ratio: 1.25) {
+  * {
+    zoom: 0.8;
+  }
+}

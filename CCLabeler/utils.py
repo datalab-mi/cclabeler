@@ -40,7 +40,7 @@ class Player():
     def pong(self):
         if self.name not in users_state:
             return False
-        if datetime.now() - users_state[self.name] > timedelta(seconds=9):
+        if datetime.now() - users_state[self.name] > timedelta(seconds=10):
             return False
         else:
             return True
