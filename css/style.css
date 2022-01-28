@@ -43,6 +43,9 @@ body {
     margin-bottom: 10px;
 }
 
+.alert {
+    margin-top: 0px !important ;
+}
 
 #lineStyleControler {
     padding-top: 20px;
