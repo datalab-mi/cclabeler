@@ -2,20 +2,20 @@ body {
     text-align: center;
 }
 .header {
-    margin-bottom: 30px;
+    margin-bottom: 1vh;
 }
 
 .left {
-    margin-left: 40px;
+    margin-left: 3vh;
     float: left;
-    height: 860px;
-    width: 320px;
-    padding-top: 1px;
+    height: 90vh;
+    width: 17vw;
 }
 .right {
-    margin-left: 40px;
-    float: left;
-    width: 1280px;
+    margin-right: 2vw;
+    float: right;
+    width: 72vw;
+    height: 90vh;
 }
 #grid {
     margin-top: 10px;

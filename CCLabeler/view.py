@@ -217,6 +217,10 @@ def table(request):
         # a client user pong, locked down the connexion
         return login(request, locklogin=1)
 
+    else:
+        # New connection
+        #player.connect()
+        pass
     if not player.testPsd(pasd):
         return login(request, errorlogin=1)
 

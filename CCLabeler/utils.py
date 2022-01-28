@@ -39,11 +39,13 @@ class Player():
     @property
     def pong(self):
         if self.name not in users_state:
-            return False
-        if datetime.now() - users_state[self.name] > timedelta(seconds=9):
+            print('user %s is not connected!'%self.name )
             return False
         else:
-            return True
+            last_ping = users_state[self.name]
+            print(last_ping)
+            return datetime.now() - last_ping < timedelta(seconds=11)
+
 
     def disconnect(self):
         if self.name in users_state:

@@ -95,6 +95,9 @@ var markStatus = new MarkStatus(initMarkStatus);
 /******************** init and resize ****************/
 
 var canvas = document.getElementById("cvs");
+var right = document.getElementsByClassName("right")[0];
+canvas.width = right.offsetWidth;
+canvas.height = right.offsetHeight;
 var ctx = canvas.getContext('2d');
 var imgStatus = {
     border: 100,
@@ -167,6 +170,8 @@ function drawLine(context, x, y, color = '#f00', width = 1) {
     context.strokeStyle = color;
     context.stroke();
 }
+
+
 
 /******************** label ****************/
 

@@ -1,8 +1,5 @@
 name: Push Docker image to GitHub container Registery
-on:
-  push:
-    branches:
-      - master
+on: push
 jobs:
   push_to_registry:
     runs-on: ubuntu-latest
@@ -10,7 +7,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
         with:
-          ref: master
+          ref: ${{ github.ref_name }}
       - name: Push to GitHub Container Registery
         uses: docker/build-push-action@v1
         with:

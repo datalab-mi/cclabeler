@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" href="static/favicon.ico"/>
     <title>Labelling page</title>
@@ -50,7 +50,7 @@
                                                                    src="static/rectify.svg"/> &nbsp; rectify
     </button>
     <h3 class="glabel"></h3>
-    <canvas id="grid" height="320" width="320">不支持Canvas</canvas>
+    <canvas id="grid" height="200" width="200">Canvas</canvas>
     <button type="button" id="mark" class="btn btn-success">Marked as labeled</button>
     <button type="button" id="unmark" class="btn btn-warning">Marked as unlabeled</button>
     <div id="lineStyleControler" class="row">
@@ -131,10 +131,10 @@
 <div class="right">
     <div id="image_def"></div>
     <canvas id="cvs" width="1440" height="900">
-        悲剧了，你的浏览器不支持Canvas？！赶快换一个吧！！
     </canvas>
 </div>
 <script>
+
         var user = "{{ user }}";
         var origin_user = "{{ origin_user }}";
 

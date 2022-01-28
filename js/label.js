@@ -3,6 +3,11 @@
 // var label = [1, 0, 1, 0];
 // var current = 0;
 
+var canvasGrid = document.getElementById("grid");
+var left = document.getElementsByClassName("left")[0];
+canvasGrid.width = left.offsetWidth;
+canvasGrid.height = left.offsetWidth;
+
 function clip(w, h) {
     var cy = 0, cx = 0, cw = w * 2, ch = h * 2;
     var current = markStatus.current;
