@@ -352,7 +352,7 @@ def upload(request):
         if form.is_valid():
             msg = ''
             for f in request.FILES.getlist('file'):  # myfile is the name of your html file button
-                msg += handle_uploaded_file(f, str(f.name), str(request.POST['user']))
+                msg += handle_uploaded_file(f, str(f.name), str(request.POST['user']))+"<br>"
             # Redirect to previous page
             # TODO: pass user/password to prevent from asking it again
             # return redirect(request.META['HTTP_REFERER'])
@@ -370,6 +370,31 @@ def handle_uploaded_file(file, filename, user):
     if imgid in user_json["data"]:
         return "The image %s exists in %s \n" % (filename, user)
     user_json["data"] += [imgid]
+
+    ############################################################
+    image_path = Path(utils.imgdir) / filename
+    if os.path.isfile(image_path):
+        return "The image file allready exists : %s \n" % (image_path)
+    ############################################################
+    md5_dict = dict()
+    for resfile in Path(utils.resdir).glob('*.json'):
+        with open(resfile) as f:
+            js = json.load(f)
+            properties = js['properties']
+            image_path = os.path.join(utils.imgdir, properties['name'])
+            md5 = properties['md5']
+            md5_dict[md5] = image_path
+    print('md5_dict:', md5_dict)
+    import hashlib
+    # Get the MD5 hash of the file
+    md5base = hashlib.md5()
+    for chunk in file.chunks():
+        md5base.update(chunk)
+    md5 = md5base.hexdigest()
+    if md5 in md5_dict:
+        return "The image %s allready exists (md5) in %s \n" % (filename, md5_dict[md5])
+    ############################################################
+
     with path_user_json.open("w", encoding="UTF-8") as target:
         json.dump(user_json, target)
 
