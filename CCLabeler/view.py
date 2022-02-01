@@ -1,16 +1,17 @@
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, HttpResponseRedirect, redirect, reverse
-from django.views.decorators.csrf import csrf_exempt
-
+import hashlib
 import json
-from pathlib import Path
 import os
 from functools import reduce
+from pathlib import Path
+
+from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
 from . import utils
 from .forms import UploadFileForm, UnlockUserForm
 
-from django.conf import settings
 Player = utils.Player
 
 
@@ -30,7 +31,7 @@ def disconnect(request):
 
 def ping(request):
     name = request.POST.get('user')
-    print('user %s wants to ping'%name)
+    print('user %s wants to ping' % name)
     player = Player(name, load=False)
     if player.pong:
         player.connect()
@@ -219,7 +220,7 @@ def table(request):
 
     else:
         # New connection
-        #player.connect()
+        # player.connect()
         pass
     if not player.testPsd(pasd):
         return login(request, errorlogin=1)
@@ -350,9 +351,21 @@ def upload(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
+
+            #Prepare md5 dict for files comparison
+            md5_dict = dict()
+            for resfile in Path(utils.resdir).glob('*.json'):
+                with open(resfile) as f:
+                    js = json.load(f)
+                    properties = js['properties']
+                    image_path = os.path.join(utils.imgdir, properties['name'])
+                    md5 = properties['md5']
+                    md5_dict[md5] = image_path
+
             msg = ''
             for f in request.FILES.getlist('file'):  # myfile is the name of your html file button
-                msg += handle_uploaded_file(f, str(f.name), str(request.POST['user']))
+                msg += handle_uploaded_file(f, str(f.name), str(request.POST['user']), md5_dict) + "<br>"
+
             # Redirect to previous page
             # TODO: pass user/password to prevent from asking it again
             # return redirect(request.META['HTTP_REFERER'])
@@ -361,15 +374,34 @@ def upload(request):
             return HttpResponse("error")
 
 
-def handle_uploaded_file(file, filename, user):
+def handle_uploaded_file(file, filename, user, md5_dict):
     imgid = filename  # Path(filename).stem
     # Allocate the user
     path_user_json = Path(utils.userdir) / user
     with path_user_json.open(encoding="UTF-8") as source:
         user_json = json.load(source)
     if imgid in user_json["data"]:
+        #This user has this image
         return "The image %s exists in %s \n" % (filename, user)
     user_json["data"] += [imgid]
+
+    ############################################################
+    image_path = Path(utils.imgdir) / filename
+    if os.path.isfile(image_path):
+        # Another user seems to have this image
+        return "The image file allready exists : %s \n" % (image_path)
+    ############################################################
+    # Get the MD5 hash of the file
+    md5base = hashlib.md5()
+    for chunk in file.chunks():
+        md5base.update(chunk)
+    md5 = md5base.hexdigest()
+    # Check if md5 allready exists
+    if md5 in md5_dict:
+        #This image exists with another name
+        return "The image %s allready exists - Similar md5 to %s \n" % (filename, md5_dict[md5])
+    ############################################################
+
     with path_user_json.open("w", encoding="UTF-8") as target:
         json.dump(user_json, target)
 
